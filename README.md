@@ -406,6 +406,10 @@
       <td><a href="https://youtu.be/0jkfjxv6Y-I">การใช้โปรแกรม R: การอ่านข้อมูลจาก Google Sheets มาสร้างเป็น Dataframe</a></td>
     </tr>
     <tr>
+      <td><a href=https://youtu.be/bXtZi5KP8nI><img src=https://i.ytimg.com/vi/bXtZi5KP8nI/mqdefault.jpg />&nbsp;</a></td>
+      <td><a href="https://youtu.be/bXtZi5KP8nI">การใช้โปรแกรม R: การอ่านและแปลงข้อมูลจาก Google Form เช่น แปลงข้อความ "พอใจมาก" ให้เป็นเลข 4</a></td>
+    </tr>
+    <tr>
       <td><a href=https://youtu.be/Uf07lX88hS4><img src=https://i.ytimg.com/vi/Uf07lX88hS4/mqdefault.jpg />&nbsp;</a></td>
       <td><a href="https://youtu.be/Uf07lX88hS4">การใช้โปรแกรม R: การอ่านข้อมูลจาก SPSS มาสร้างเป็น Dataframe</a></td>
     </tr>
@@ -418,6 +422,9 @@
       <td><a href="https://youtu.be/NkNl86QdZJ0">การใช้โปรแกรม R: การอ่านข้อมูลจาก Stata มาสร้างเป็น Dataframe</a></td>
     </tr>
     <tr>
+      <td><a href=https://youtu.be/IcmFv57KvOU><img src=https://i.ytimg.com/vi/IcmFv57KvOU/mqdefault.jpg />&nbsp;</a></td>
+      <td><a href="https://youtu.be/IcmFv57KvOU">สอน R: อ่านไฟล์ที่แชร์ผ่าน OneDrive (read shared file from OneDrive)</a></td>
+    </tr>    <tr>
       <td><a href=https://youtu.be/03U0WWfRb4Y><img src=https://i.ytimg.com/vi/03U0WWfRb4Y/mqdefault.jpg />&nbsp;</a></td>
       <td><a href="https://youtu.be/03U0WWfRb4Y">การใช้โปรแกรม R: การอ่านข้อมูลแบบ CSV ที่แชร์ผ่าน Dropbox มาสร้างเป็น Dataframe</a></td>
     </tr>
@@ -493,17 +500,10 @@
       <td><a href=https://youtu.be/U0-K35kV8Gc><img src=https://i.ytimg.com/vi/U0-K35kV8Gc/mqdefault.jpg />&nbsp;</a></td>
       <td><a href="https://youtu.be/U0-K35kV8Gc">สอน R tidyr: การแยกข้อมูลในคอลัมน์ออกจากกันด้วยตำแหน่งที่ตั้งของตัวอักษร</a></td>
     </tr>
-    <tr>
-      <td><a href=https://youtu.be/bXtZi5KP8nI><img src=https://i.ytimg.com/vi/bXtZi5KP8nI/mqdefault.jpg />&nbsp;</a></td>
-      <td><a href="https://youtu.be/bXtZi5KP8nI">การใช้โปรแกรม R: การอ่านและแปลงข้อมูลจาก Google Form เช่น แปลงข้อความ "พอใจมาก" ให้เป็นเลข 4</a></td>
-    </tr>
+
     <tr>
       <td><a href=https://youtu.be/DcUy0iHHS2s><img src=https://i.ytimg.com/vi/DcUy0iHHS2s/mqdefault.jpg />&nbsp;</a></td>
       <td><a href="https://youtu.be/DcUy0iHHS2s">สอน R: การดึงราคาหุ้นรายวันด้วย tidyquant package</a></td>
-    </tr>
-    <tr>
-      <td><a href=https://youtu.be/oauQtZUU4Wk><img src=https://i.ytimg.com/vi/oauQtZUU4Wk/mqdefault.jpg />&nbsp;</a></td>
-      <td><a href="https://youtu.be/oauQtZUU4Wk">เข้าใจรหัสสำหรับเก็บอักขระภาษาไทย Windows 874 และ UTF-8 พร้อมวิธีการเปิดและแปลงไฟล์</a></td>
     </tr>
     <tr>
       <td><a href=https://youtu.be/0S-3-0C8ie8><img src=https://i.ytimg.com/vi/0S-3-0C8ie8/mqdefault.jpg />&nbsp;</a></td>
@@ -521,9 +521,6 @@
       <td><a href=https://youtu.be/nUWyVgshNig><img src=https://i.ytimg.com/vi/nUWyVgshNig/mqdefault.jpg />&nbsp;</a></td>
       <td><a href="https://youtu.be/nUWyVgshNig">สอน R: การทดสอบความแตกต่างของค่าเฉลี่ย 2 กลุ่ม two-sample t-test</a></td>
     </tr>
-    <tr>
-      <td><a href=https://youtu.be/IcmFv57KvOU><img src=https://i.ytimg.com/vi/IcmFv57KvOU/mqdefault.jpg />&nbsp;</a></td>
-      <td><a href="https://youtu.be/IcmFv57KvOU">สอน R: อ่านไฟล์ที่แชร์ผ่าน OneDrive (read shared file from OneDrive)</a></td>
-    </tr>
+
   </tbody>
 </table>
