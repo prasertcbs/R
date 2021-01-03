@@ -1,5 +1,4 @@
-# R
-สอนการใช้โปรแกรม R
+# สอนการใข้โปรแกรม R
 
 <table border="1" class="dataframe">
   <thead>
