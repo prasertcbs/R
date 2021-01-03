@@ -1,0 +1,14 @@
+---
+title: "Read CSV from github URL"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+df <- read_csv("https://github.com/fivethirtyeight/data/raw/master/alcohol-consumption/drinks.csv")
+head(df)
+```
+

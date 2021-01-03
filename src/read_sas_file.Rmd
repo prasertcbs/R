@@ -1,0 +1,25 @@
+---
+title: "Read SAS files"
+output: html_notebook
+---
+
+```{r}
+library(haven)
+```
+
+```{r}
+df <- read_sas("c:/temp/car_sales.sas7bdat")
+head(df)
+```
+
+```{r}
+df2 <- read_xpt("c:/temp/bankloan.xpt")
+head(df2)
+```
+
+```{r}
+library(readr)
+write_csv(df2, "c:/temp/bankloan.csv") #readr
+write_sav(df2, "c:/temp/bankloan.sav") # haven
+```
+

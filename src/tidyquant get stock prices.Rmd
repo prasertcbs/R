@@ -1,0 +1,59 @@
+---
+title: "use tidyquant to get daily stock prices"
+output: html_notebook
+---
+
+```{r warning=FALSE}
+library(tidyverse)
+library(tidyquant)
+```
+
+# get Starbucks (SBUX) daily price
+```{r}
+df <- tq_get("SBUX", get="stock.prices", from="2017-01-01", to="2018-11-13")
+df
+```
+
+```{r}
+df %>% 
+  ggplot(aes(x=date, y=close)) + geom_line()
+```
+
+# get PTT daily price
+```{r}
+df <- tq_get("PTT.BK", get="stock.prices", from="2017-01-01", to="2018-11-13")
+df
+```
+
+```{r}
+df %>% 
+  ggplot(aes(x=date, y=close)) + geom_line()
+```
+
+# get multiple stocks
+```{r}
+df <- tq_get(c("PTT.BK", "SCC.BK", "BBL.BK"), get="stock.prices", from="2017-01-01", to="2018-11-13")
+# a better way to get stock from SET -- use paste to append .BK at the end of each symbol
+# df <- tq_get(paste(c("PTT", "SCC", "BBL", ".BK", sep="")), get="stock.prices", from="2017-01-01", to="2018-11-13")
+df
+```
+
+# remove .BK from symbol
+```{r}
+df$symbol <- gsub(".BK", "", df$symbol)
+df
+```
+
+# facet plot 
+```{r}
+df %>%
+  ggplot(aes(x=date, y=close, color=symbol)) + geom_line() +
+  facet_wrap(~ symbol, ncol=2, scale="free_y")
+```
+
+# save daily price to CSV/XLSX
+```{r}
+write_csv(df, '~/port.csv')
+writexl::write_xlsx(df, '~/port.xlsx')
+```
+

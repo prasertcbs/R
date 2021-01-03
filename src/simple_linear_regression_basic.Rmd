@@ -1,0 +1,77 @@
+---
+title: "Simple Linear Regression"
+output: html_notebook
+---
+
+ref: https://en.wikipedia.org/wiki/Simple_linear_regression#Numerical_properties
+```{r}
+library(tidyverse)
+library(broom)
+library(psych)
+library(modelr)
+library(ggfortify)
+```
+
+```{r}
+url <- 'https://github.com/prasertcbs/basic-dataset/raw/master/height_mass_women.csv'
+df <- read_csv(url)
+df
+```
+
+```{r}
+summary(df)
+```
+
+```{r}
+describe(df) # pysch package
+```
+
+```{r}
+df %>% ggplot(aes(x=Height_m, y=Mass_kg)) + geom_point() + 
+    stat_smooth(method='lm', se=FALSE)
+```
+
+```{r}
+model <- lm(Mass_kg ~ Height_m, data=df)
+model
+```
+
+```{r}
+summary(model)
+```
+
+```{r}
+am <- anova(model)
+am
+```
+
+```{r}
+tidy(model) # broom package
+```
+
+```{r}
+glance(model) # broom package
+```
+
+$$y=-39.062+61.27 \times Height_m$$
+
+```{r}
+mse(model, df)
+```
+
+```{r}
+model$residuals
+```
+
+```{r}
+sum(model$residuals ** 2)/length(df$Height_m)
+```
+
+```{r}
+plot(model)
+```
+
+```{r}
+autoplot(model, which=1:6, ncol=3) # ggfortify package
+```
+

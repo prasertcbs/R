@@ -1,0 +1,47 @@
+---
+title: "One-way ANOVA"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+df <- read_csv('https://github.com/prasertcbs/basic-dataset/raw/master/anova_one_way_wide_format.csv')
+df
+```
+
+```{r}
+df <- df %>% gather() %>% transmute(fertilizer=key, height=value)
+df
+```
+
+```{r}
+df %>% ggplot(aes(x=fertilizer, y=height, color=fertilizer)) + geom_point()
+```
+
+```{r}
+df %>% ggplot(aes(x=fertilizer, y=height, color=fertilizer)) + geom_point() +
+    stat_summary(fun.y=mean, color='black', geom='point', size=4)
+```
+
+```{r}
+df %>% ggplot(aes(x=fertilizer, y=height, color=fertilizer)) + geom_point() +
+    stat_summary(fun.y=mean, color='black', geom='point', size=4) +
+    geom_hline(yintercept = mean(df$height), color='maroon', linetype='dashed')
+```
+
+```{r}
+mean(df$height)
+```
+
+```{r}
+model <- aov(height ~ fertilizer, data=df)
+summary(model)
+```
+
+```{r}
+ph <- TukeyHSD(model)
+ph
+```

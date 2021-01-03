@@ -1,0 +1,16 @@
+---
+title: "Read SPSS"
+output: html_notebook
+---
+
+```{r}
+library(haven)
+```
+
+```{r}
+# df <- read_spss("C:\\Temp\\spss\\car_sales.sav")
+df <- read_spss("C:/Temp/spss/car_sales.sav")
+# df <- read_spss(choose.files())
+df
+```
+

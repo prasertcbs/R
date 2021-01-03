@@ -1,0 +1,45 @@
+---
+title: "R Bank of Thailand REST API"
+author: Prasert Kanawattanachai
+output: html_notebook
+---
+
+```{r, message=FALSE}
+library(httr)
+library(jsonlite)
+library(tidyverse)
+library(lubridate)
+```
+
+```{r}
+url <- 'https://iapi.bot.or.th/Stat/Stat-ReferenceRate/DAILY_REF_RATE_V1/'
+querystring = list('start_period'='2017-08-01', 'end_period'='2017-08-31')
+headers <- 'U9G1L457H6DCugT7VmBaEacbHV9RX0PySO05cYaGsm'
+response <- GET(url, query=querystring, add_headers("api-key"=headers))
+```
+
+```{r}
+prettify((toJSON(content(response))))
+response$status_code
+```
+
+```{r}
+j <- content(response)$result$data$data_detail
+df <- bind_rows(j)
+df
+```
+
+```{r}
+df <- df %>% mutate(period=ymd(period),
+                    rate=as.numeric(rate))
+df
+```
+
+```{r}
+df %>% ggplot(aes(period, rate)) + geom_point() + geom_line()
+```
+
+```{r}
+write_csv(df, "fx.csv")
+```
+

@@ -1,0 +1,96 @@
+---
+title: "read Google Sheets (Google Form data)"
+output: html_notebook
+---
+
+Google Form: https://goo.gl/forms/mahcMnQxzc2vZhoz2  
+Google Sheets: https://docs.google.com/spreadsheets/d/1Xi5jk9rkfOewN16cOlH4aFuPKoXMzAj8d8Eawveglpc/edit#gid=22521621
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+# https://docs.google.com/spreadsheets/d/1Xi5jk9rkfOewN16cOlH4aFuPKoXMzAj8d8Eawveglpc/edit#gid=22521621
+url <- "https://docs.google.com/spreadsheets/d/1Xi5jk9rkfOewN16cOlH4aFuPKoXMzAj8d8Eawveglpc/export?format=csv&gid=22521621"
+
+df <- read_csv(url)
+head(df)
+```
+
+# rename columns
+```{r}
+colnames(df) <- c("timestamp", "gender", "age", "product", "price", "service", "overall")
+df
+```
+
+```{r}
+df[ , c("product", "overall")]
+```
+
+# dplyr::recode
+```{r}
+v <- recode(df$price, 
+                     'very satisfied' = 5, 
+                     'satisfied' = 4, 
+                     'neutral' = 3, 
+                     'dissatisfied' = 2, 
+                     'very dissatisfied' = 1)
+v
+```
+
+```{r}
+df$gender <- recode(df$gender, 
+       'Male' = 'M',
+       'Female' = 'F',
+       'Prefer not to say' = 'X'
+)
+```
+
+# recode/change labels to number value
+```{r}
+map_cols <- c("product", "price", "service", "overall")
+df[ , map_cols] <- sapply(df[ , map_cols], 
+                     FUN = function(x) recode(x, 
+                                              'very satisfied' = 5, 
+                                              'satisfied' = 4, 
+                                              'neutral' = 3, 
+                                              'dissatisfied' = 2, 
+                                              'very dissatisfied' = 1))
+df
+
+# df[ , 4:7]  <- sapply(df[ , 4:7], 
+#                      FUN = function(x) recode(x, 
+#                                               'very satisfied' = 5, 
+#                                               'satisfied' = 4, 
+#                                               'neutral' = 3, 
+#                                               'dissatisfied' = 2, 
+#                                               'very dissatisfied' = 1))
+```
+
+```{r}
+tail(df)
+```
+
+```{r}
+library(haven)
+# write_sav(df, 'demo.sav')
+# write_sav(df %>% select(-timestamp), 'demo.sav')
+```
+
+# use purrr::map
+```{r}
+# map_cols <- c("product", "price", "service", "overall")
+# df[ , map_cols] <- 
+#     df %>% 
+#     select(product:overall) %>%
+#     map_dfr(~recode(., 
+#          'very satisfied' = 5, 
+#          'satisfied' = 4, 
+#          'neutral' = 3, 
+#          'dissatisfied' = 2, 
+#          'very dissatisfied' = 1))
+# df
+```
+
+

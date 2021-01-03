@@ -1,0 +1,112 @@
+---
+title: "PM 2.5 Bangkok R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+library(lubridate)
+```
+
+```{r}
+url <- 'http://berkeleyearth.lbl.gov/air-quality/maps/cities/Thailand/Bangkok/Bangkok.txt'
+df <- read_tsv(url, skip=10, col_names=FALSE)
+df
+```
+
+```{r}
+colnames(df) <- c('year', 'month', 'day', 'hour', 'pm2_5', 'X6', 'X7')
+```
+
+```{r}
+df
+```
+
+```{r}
+df <- df %>% select(year:pm2_5)
+df
+```
+
+```{r}
+df <- df %>% mutate(date_time=ISOdate(year, month, day, hour),
+              local_date_time=date_time+hours(7),
+              local_hour=hour(local_date_time))
+df
+```
+
+# visualize data
+```{r}
+df %>% ggplot(aes(pm2_5)) + geom_histogram()
+```
+
+```{r}
+df %>% group_by(date(local_date_time)) %>% 
+    summarize(avg_pm2_5=mean(pm2_5))
+```
+
+```{r}
+df %>% group_by(date(local_date_time)) %>% 
+    summarize(avg_pm2_5=mean(pm2_5)) %>% 
+    ggplot(aes(avg_pm2_5)) + geom_histogram()
+```
+
+```{r}
+df %>% ggplot(aes(x=local_hour, y=pm2_5, color=as.factor(local_hour))) + geom_point()
+```
+
+# top five best days (lowest PM 2.5)
+```{r}
+df %>% mutate(date=date(local_date_time)) %>% 
+    group_by(date) %>% 
+    summarize(avg_pm2_5 = mean(pm2_5)) %>% 
+    arrange(avg_pm2_5) %>% 
+    top_n(-5)
+```
+
+# 5 worst days (highest PM 2.5)
+```{r}
+df %>% mutate(date=date(local_date_time)) %>% 
+    group_by(date) %>% 
+    summarize(avg_pm2_5 = mean(pm2_5)) %>% 
+    arrange(desc(avg_pm2_5)) %>% 
+    top_n(5)
+```
+
+```{r}
+df %>% mutate(month=month(local_date_time)) %>% 
+    group_by(month) %>% 
+    summarize(avg_pm2_5 = mean(pm2_5))
+```
+
+```{r}
+df %>% mutate(weekday=weekdays(local_date_time)) %>% 
+    group_by(weekday) %>% 
+    summarize(avg_pm2_5 = mean(pm2_5)) %>% 
+    arrange(avg_pm2_5)
+```
+
+```{r}
+df %>% 
+    filter(month(local_date_time)==1) %>% 
+    group_by(local_hour) %>% 
+    summarize(avg_pm2_5 = mean(pm2_5)) %>% 
+    arrange(local_hour) %>%
+    ggplot(aes(x=local_hour, y=avg_pm2_5)) + geom_line()
+```
+
+```{r}
+df %>% 
+    filter(year==2018 | year==2019) %>% 
+    ggplot(aes(x=as.factor(month(local_date_time)), y=pm2_5, fill=as.factor(year(local_date_time)))) + geom_boxplot()
+```
+
+```{r}
+df %>% mutate(month=month(local_date_time),
+              year=year(local_date_time)) %>% 
+    group_by(year, month) %>% 
+    summarize(avg_pm2_5=mean(pm2_5)) %>% 
+    ggplot(aes(month, y=avg_pm2_5, color=as.factor(year))) + geom_line()
+```
+
+
+

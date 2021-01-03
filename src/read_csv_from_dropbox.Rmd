@@ -1,0 +1,15 @@
+---
+title: "read csv from dropbox"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+df <- read_csv("https://www.dropbox.com/s/moetrnevrdyqv9v/drinks.csv?dl=1")
+head(df)
+```
+
+

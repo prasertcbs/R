@@ -1,0 +1,117 @@
+---
+title: "Logistic Regression"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+library(broom)
+library(caret) # confusion matrix
+```
+
+ref: https://en.wikipedia.org/wiki/Logistic_regression#Probability_of_passing_an_exam_versus_hours_of_study
+```{r}
+url='https://github.com/prasertcbs/basic-dataset/raw/master/study_hours.csv'
+df <- read_csv(url)
+df
+```
+```{r}
+df %>% ggplot(aes(x=Hours, y=Pass)) + geom_point()
+```
+
+```{r}
+df %>% ggplot(aes(x=Hours, y=Pass)) + geom_point() + 
+    stat_smooth(method="lm", se=FALSE)
+```
+
+### plot logistic regression
+```{r}
+df %>% ggplot(aes(x=Hours, y=Pass)) + geom_point() + 
+    stat_smooth(method="glm", method.args=list(family="binomial"), se=FALSE) +
+    labs(y='prop of passing exam')
+```
+
+```{r}
+model <- glm(Pass ~ Hours, data = df, family = "binomial")
+model
+```
+
+```{r}
+summary(model)
+```
+
+```{r}
+tidy(model) # broom package
+```
+
+```{r}
+glance(model) # broom package
+```
+
+```{r}
+model$fitted.values
+```
+
+```{r}
+predict(model, type="response")
+```
+
+```{r}
+tidy(predict(model, type="response"))
+```
+
+## confusion matrix
+```{r}
+prob <- predict(model, type="response")
+# predict <- prob > .5 # TRUE, FALSE
+predict <- as.numeric(prob > .5)
+predict
+```
+
+
+```{r}
+# confusionMatrix(data =predict, reference = actual) # error (need factor not numeric)
+confusionMatrix(data = factor(predict, levels = c(0, 1), labels = c("fail", "pass")), 
+                reference = factor(df$Pass, levels = c(0, 1), labels = c("fail", "pass")))
+```
+
+### customize confusion matrix
+```{r}
+confusionMatrix(data = factor(predict, levels = c(1, 0), labels = c("pass", "fail")), 
+                reference = factor(df$Pass, levels = c(1, 0), labels = c("pass", "fail")),
+                dnn=c("Predict", "Actual"))
+```
+
+```{r}
+df$Pass2=df$Pass
+df
+```
+
+```{r}
+df$Pass2[df$Hours == 2.25] <- 0
+df
+```
+
+```{r}
+confusionMatrix(data = factor(predict, levels = c(1, 0), labels = c("pass", "fail")), 
+                reference = factor(df$Pass2, levels = c(1, 0), labels = c("pass", "fail")),
+                dnn=c("Predict", "Actual"))
+```
+
+```{r}
+coef(model)
+```
+
+```{r}
+coef(model)[1]/coef(model)[2]
+```
+
+
+```{r}
+ggplot(df, aes(x=Hours, y=Pass)) + geom_point() + 
+    labs(y='prob of passing exam') +
+    geom_vline(xintercept = abs(coef(model)[1]/coef(model)[2]), color='red', linetype='dashed') +
+    geom_hline(yintercept = .5, color='green', linetype='dashed') +
+    stat_smooth(method="glm", method.args=list(family="binomial"), se=FALSE)
+```
+

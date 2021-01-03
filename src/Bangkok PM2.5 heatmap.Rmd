@@ -1,0 +1,138 @@
+---
+title: "PM 2.5 Bangkok (heatmap)"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+library(lubridate)
+```
+
+```{r}
+url <- 'http://berkeleyearth.lbl.gov/air-quality/maps/cities/Thailand/Bangkok/Bangkok.txt'
+df <- read_tsv(url, skip=10, col_names=FALSE)
+df
+```
+
+```{r}
+colnames(df) <- c('year', 'month', 'day', 'hour', 'pm2_5', 'X6', 'X7')
+```
+
+```{r}
+df
+```
+
+```{r}
+df <- df %>% select(year:pm2_5)
+df
+```
+
+```{r}
+df <- df %>% mutate(date_time=ISOdate(year, month, day, hour),
+              local_date_time=date_time+hours(7),
+              local_hour=hour(local_date_time),
+              local_week=isoweek(local_date_time))
+df
+```
+
+```{r}
+df %>% mutate(date=date(local_date_time)) %>%   
+    group_by(date) %>% 
+    summarize(avg_pm2_5=mean(pm2_5)) %>% 
+    filter(year(date)==2017)
+```
+
+
+```{r}
+df %>% mutate(date=date(local_date_time)) %>% 
+    group_by(date) %>% 
+    summarize(avg_pm2_5=mean(pm2_5)) %>% 
+    ggplot(aes(date, y=avg_pm2_5, color=as.factor(year(date)))) + geom_line()
+```
+
+```{r}
+df %>% mutate(month=month(local_date_time),
+              year=year(local_date_time)) %>% 
+    group_by(year, month) %>% 
+    summarize(avg_pm2_5=mean(pm2_5)) %>% 
+    ggplot(aes(month, y=avg_pm2_5, color=as.factor(year))) + geom_line()
+```
+
+```{r}
+df %>% mutate(date=date(local_date_time)) %>% 
+    group_by(date) %>% 
+    summarize(avg_pm2_5=mean(pm2_5)) %>% 
+    mutate(day=day(date),
+           month=month(date),
+           year=year(date)) %>% 
+    filter(year==2018) %>% 
+    ggplot(aes(day, y=month, fill=avg_pm2_5)) + geom_tile()
+```
+
+```{r}
+df %>% mutate(date=date(local_date_time)) %>% 
+    group_by(date) %>% 
+    summarize(avg_pm2_5=mean(pm2_5)) %>% 
+    mutate(day=as.factor(day(date)),
+           month=as.factor(month(date)),
+           year=as.factor(year(date))) %>% 
+    filter(year==2018) %>% 
+    ggplot(aes(day, y=month, fill=avg_pm2_5)) + geom_tile()
+```
+
+```{r}
+df %>% mutate(date=date(local_date_time)) %>% 
+    group_by(date) %>% 
+    summarize(avg_pm2_5=mean(pm2_5)) %>% 
+    mutate(day=as.factor(day(date)),
+           month=as.factor(month(date)),
+           year=as.factor(year(date))) %>% 
+    filter(year==2018) %>% 
+    ggplot(aes(day, y=month, fill=avg_pm2_5)) + geom_tile(color='white') +
+        scale_fill_gradient(low='green', high='red')
+```
+
+```{r, fig.height=4, fig.width=4}
+df %>% 
+    filter(year(local_date_time)>2016) %>% 
+    mutate(date=date(local_date_time)) %>% 
+    group_by(date) %>% 
+    summarize(avg_pm2_5=mean(pm2_5)) %>% 
+    mutate(day=as.factor(day(date)),
+           month=as.factor(month(date)),
+           year=as.factor(year(date))) %>% 
+    ggplot(aes(day, y=month, fill=avg_pm2_5)) + geom_tile(color='white') +
+        scale_fill_gradient(low='green', high='red') +
+        facet_grid(year~.)
+```
+
+```{r}
+df %>% 
+    filter(year(local_date_time)>2016) %>% 
+    mutate(date=date(local_date_time)) %>% 
+    group_by(date) %>% 
+    summarize(avg_pm2_5=mean(pm2_5)) %>% 
+    mutate(pm_level=cut(avg_pm2_5,
+           breaks=c(0, 12, 35.4, 55.4, 150.4, 250.4, 350.4),
+           labels=c('Good', 'Moderate', 'Unhealthy for Sensitive Groups', 'Unhealthy', 'Very Unhealthy', 'Hazardous')))
+```
+
+https://en.wikipedia.org/wiki/Air_quality_index#Computing_the_AQI
+https://www.nceas.ucsb.edu/~frazier/RSpatialGuides/colorPaletteCheatsheet.pdf
+```{r, fig.height=4, fig.width=4}
+df %>% 
+    filter(year(local_date_time)>=2016) %>% 
+    mutate(date=date(local_date_time)) %>% 
+    group_by(date) %>% 
+    summarize(avg_pm2_5=mean(pm2_5)) %>% 
+    mutate(pm_level=cut(avg_pm2_5,
+           breaks=c(0, 12, 35.4, 55.4, 150.4, 250.4, 350.4),
+           labels=c('Good', 'Moderate', 'Unhealthy for Sensitive Groups', 'Unhealthy', 'Very Unhealthy', 'Hazardous'), 
+           ordered_result = TRUE)) %>% 
+    mutate(day=as.factor(day(date)),
+           month=as.factor(month(date)),
+           year=as.factor(year(date))) %>% 
+    ggplot(aes(day, y=month, fill=pm_level)) + geom_tile(color='white') +
+        scale_fill_manual(values=c('green', 'yellow', 'orange', 'red', 'violetred', 'red4')) +
+        facet_grid(year~.)
+```

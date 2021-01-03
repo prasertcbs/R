@@ -1,0 +1,81 @@
+---
+title: "Two Sample t-test"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+library(car) # for Levene Test
+```
+
+```{r}
+n <- 100
+d1 <- data_frame(gender = rep('F', n),
+                 height=rnorm(n, mean=159, sd=5.9))
+d2 <- data_frame(gender = rep('M', n),
+                 height=rnorm(n, mean=170.3, sd=6.3))
+df <- rbind(d1, d2)
+df
+```
+
+```{r}
+df %>% group_by(gender) %>% 
+    summarise(n=length(height), mean=mean(height), sd=sd(height))
+```
+
+```{r}
+df %>% ggplot(aes(x=gender, y=height, color=gender)) + geom_violin() + geom_boxplot(width=.4)
+```
+
+$$
+H_0: \mu_f=\mu_m
+\\
+H_a: \mu_f\neq\mu_m
+$$
+
+```{r}
+?t.test
+```
+
+```{r}
+m <- t.test(height ~ gender, data=df)
+m
+```
+
+```{r}
+lt <- leveneTest(height ~ gender, data=df)
+lt
+```
+
+$$
+H_0: \sigma^2_f=\sigma^2_m
+\\
+H_a: \sigma^2_f\neq\sigma^2_m
+$$
+
+```{r}
+lt$`Pr(>F)`[1]
+```
+
+```{r}
+m <- t.test(height ~ gender, data=df, alternative='two.sided', 
+            var.equal=ifelse(lt$`Pr(>F)`[1]>.05, T, F), 
+            conf.level=.95)
+m
+```
+
+
+```{r}
+m <- t.test(height ~ gender, data=df, alternative='two.sided', 
+            var.equal=F, 
+            conf.level=.95)
+m
+```
+
+```{r}
+m2 <- t.test(d1$height, d2$height, alternative='two.sided', 
+            var.equal=ifelse(lt$`Pr(>F)`[1]>.05, T, F), 
+            conf.level=.95)
+m2
+```
+

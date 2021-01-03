@@ -1,0 +1,22 @@
+---
+title: "Read Stata files"
+output: html_notebook
+---
+
+```{r}
+library(haven)
+```
+
+```{r}
+# df <- read_stata("c:/temp/bankloan.dta")
+df <- read_stata(choose.files())
+head(df)
+```
+
+```{r}
+library(readr)
+write_csv(df, "c:/temp/accident.csv") 
+write_sav(df, "c:/temp/accident.sav")
+write_sas(df, "c:/temp/accident.sas7bdat")
+```
+
