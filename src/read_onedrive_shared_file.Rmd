@@ -1,0 +1,32 @@
+---
+title: "read shared OneDrive files"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+```
+
+
+```{r}
+url <- 'https://onedrive.live.com/download?cid=EA83D0DA458C57AF&resid=EA83D0DA458C57AF%21126&authkey=ALCxImrkFGuuddw'
+df <- read_csv(url)
+df
+```
+
+```{r}
+Sys.setlocale("LC_CTYPE", "thai")
+url <- str_replace('https://onedrive.live.com/embed?cid=EA83D0DA458C57AF&resid=EA83D0DA458C57AF%21117&authkey=AAHWJa9ZdLY4RO0', 'embed', 'download')
+dt <- read_tsv(url)
+dt
+```
+
+```{r}
+library(readxl)
+url <- str_replace("https://onedrive.live.com/embed?cid=EA83D0DA458C57AF&resid=EA83D0DA458C57AF%21109&authkey=AKLyUafXPnHrlMY", 'embed', 'download')
+destfile <- "temp.xlsx"
+curl::curl_download(url, destfile)
+dx <- read_excel(destfile)
+dx
+```
+
