@@ -1,0 +1,41 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+## download CSV
+```{r}
+# install.packages("tidyverse")
+library(tidyverse)
+url <- "https://data.bangkok.go.th/dataset/65eb2ee6-efc6-4045-8e3e-ef451b844953/resource/95bd1379-177e-4dd8-9374-c0ce307bede9/download/-..-64.csv"
+df <- read_csv(url)
+df
+```
+
+## download Excel
+```{r}
+# install.packages("openxlsx")
+library(openxlsx)
+url <- "https://data.bangkok.go.th/dataset/d7139135-3988-40fa-8703-d546eb480960/resource/70c4f872-6e4b-42db-b8c4-474ef29e0245/download/wq-4-wqi-..xlsx"
+df <- read.xlsx(url)
+df
+
+```
+
+## Data API
+```{r}
+# install.packages("jsonlite")
+library(jsonlite)
+url <- "https://data.bangkok.go.th/api/3/action/datastore_search?resource_id=70c4f872-6e4b-42db-b8c4-474ef29e0245"
+df <- fromJSON(url)
+df
+
+```
+
+```{r}
+df$result$records
+```
+
+```{r}
+df$result$fields
+```
