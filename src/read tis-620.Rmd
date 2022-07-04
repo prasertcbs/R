@@ -1,0 +1,50 @@
+---
+title: "Read TIS-620/Windows-874 encoded file"
+output: html_notebook
+---
+
+```{r}
+Sys.setlocale("LC_CTYPE", "Thai")
+```
+
+```{r}
+library(tidyverse)
+```
+
+# Open Government Data of Thailand
+- https://data.go.th/dataset/bangkok-fir-nov-2564
+```{r}
+url <- "https://data.go.th/dataset/c24ec42f-db0d-4a33-9e13-a98cd22de74d/resource/3d222c43-dea2-43f5-ad0d-7f0e58d4ad54/download/flightrule_11_2021.csv"
+# df <- read.csv(url)
+
+# df <- read_csv(url)
+df <- read_csv(url, locale = locale(encoding = "Windows-874"))
+df
+
+```
+
+```{r}
+write_csv(df, 'out-utf-8.csv')
+```
+
+```{r}
+df <- read_csv('out-utf-8.csv')
+df
+```
+
+# example 2: read from github
+```{r}
+url <- "https://raw.githubusercontent.com/prasertcbs/basic-dataset/master/province_tis.csv"
+# df <- read_csv(url)
+df <- read_csv(url, locale = locale(encoding = "Windows-874"))
+df
+```
+
+# read UTF-8
+```{r}
+url <- "https://raw.githubusercontent.com/prasertcbs/basic-dataset/master/province.csv"
+df <- read_csv(url)
+# df <- read_csv(url, locale = locale(encoding = "UTF-8"))
+df
+```
+
