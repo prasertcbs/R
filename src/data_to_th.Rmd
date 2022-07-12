@@ -1,0 +1,160 @@
+---
+title: "data.go.th Data API"
+author: "Prasert Kanawattanachai (Chulalongkorn Business School)"
+output: html_notebook
+github: https://github.com/prasertcbs
+youtube: https://www.youtube.com/prasertcbs
+---
+
+```{r}
+options(warn=-1)
+library(tidyverse)
+library(httr)
+library(jsonlite)
+library(glue)
+```
+
+# read CSV
+* https://data.go.th/dataset/mrta-crmk
+```{r}
+url <- "https://data.go.th/dataset/fd781923-6c64-4cbc-90b8-83ad77c96ecd/resource/a542d7d4-bc27-4c03-81ef-bef0a5213210/download/-..-65.csv"
+df <- read_csv(url)
+df
+```
+
+```{r}
+write_csv(df, 'mrt.csv')
+```
+
+```{r}
+library(openxlsx)
+write.xlsx(df, 'mrt.xlsx')
+```
+
+# read Excel
+* https://data.go.th/dataset/mrta-crmk
+```{r}
+library(openxlsx)
+url <- "https://data.go.th/dataset/fd781923-6c64-4cbc-90b8-83ad77c96ecd/resource/8364f303-8f2f-4693-aa0c-2c96dc7cb075/download/-..-65.xlsx"
+df <- openxlsx::read.xlsx(url)
+df
+
+```
+
+# read tis-620, cp874, Windows-874
+https://data.go.th/dataset/bangkok-fir-may-2565
+```{r}
+url <- "https://data.go.th/dataset/31170cfe-eaf5-4583-83aa-000e4de39064/resource/0899889b-ae8e-44d7-a2ba-da81bcdb24a9/download/flightrule_05_2022.csv"
+# df <- read_csv(url)
+df <- read_csv(url, locale = locale(encoding = "cp874"))
+df
+```
+
+
+# api-key from data.go.th
+```{r}
+library(getPass)
+api_key <- getPass::getPass()
+```
+
+# request data via api
+```{r}
+headers = c(
+  'api-key' = api_key
+)
+
+# url <- "https://opend.data.go.th/get-ckan/datastore_search?resource_id=48039a2a-2f01-448c-b2a2-bb0d541dedcd&limit=5"
+# url <- "https://opend.data.go.th/get-ckan/datastore_search?resource_id=48039a2a-2f01-448c-b2a2-bb0d541dedcd&limit=3"
+# url <- "https://opend.data.go.th/get-ckan/datastore_search?resource_id=5ff1765e-d54e-40c3-bb5d-e8278c255d2a&limit=5"
+
+resource_id <- 'ce7f4a78-71db-4754-9084-edca971903bd'
+limit <- 3
+url <- glue("https://opend.data.go.th/get-ckan/datastore_search?resource_id={resource_id}&limit={limit}")
+
+r <- GET(url, add_headers(headers))
+
+j <- content(r, 'text')
+# cat(j)
+prettify(j)
+```
+
+```{r}
+r$status_code
+```
+
+```{r}
+# prettify(j)
+writeLines(prettify(j), "outfile.json")
+```
+
+```{r}
+dfs <- fromJSON(j)
+dfs
+```
+```{r}
+dfs$result$fields
+```
+
+```{r}
+dt <- dfs$result$records
+dt
+```
+
+```{r}
+write_csv(dt, 'data.csv')
+```
+
+## write to Excel
+```{r}
+# install.packages("openxlsx")
+library(openxlsx)
+```
+
+```{r}
+openxlsx::write.xlsx(dt, 'data.xlsx')
+```
+
+
+# function
+```{r}
+get_open_data <- function(api_key, resource_id, limit=10000000) {
+    headers = c(
+      'api-key' = api_key
+    )
+    url <- glue("https://opend.data.go.th/get-ckan/datastore_search?resource_id={resource_id}&limit={limit}")
+
+    res <- GET(url = url, add_headers(headers))
+    s <- content(res, 'text')
+    j <- fromJSON(s)
+    df <- j$result$records
+    return(df)  
+}
+
+```
+
+```{r}
+# api_key <- getPass()
+get_open_data(api_key, '48039a2a-2f01-448c-b2a2-bb0d541dedcd', 3)
+```
+
+# httr2
+```{r}
+library(tidyverse)
+library(httr2)
+library(jsonlite)
+library(glue)
+```
+
+```{r}
+resource_id <- '48039a2a-2f01-448c-b2a2-bb0d541dedcd'
+limit <- 3
+url <- glue("https://opend.data.go.th/get-ckan/datastore_search?resource_id={resource_id}&limit={limit}")
+
+r <- request(url) %>% req_headers('api-key'=api_key) %>% req_perform()
+# s <- r %>% resp_body_string()
+# j <- fromJSON(s)
+j <- r %>% resp_body_string() %>% fromJSON()
+j$result$records
+```
+
+
