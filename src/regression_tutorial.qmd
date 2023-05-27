@@ -1,0 +1,172 @@
+---
+title: "multiple regression tutorial"
+date: now
+author:
+  - name: Prasert Kanawattanachai 
+
+project:
+    type: "default"
+
+crossref:
+  fig-title: '**Figure**'
+  fig-labels: arabic
+  title-delim: "**.**"
+  
+fig-cap-location: top
+
+title-block-banner: true
+
+code-fold: show
+code-line-numbers: true
+toc: true
+toc-depth: 5
+number-sections: true
+number-depth: 5
+
+df-print: paged
+# df-print: kable
+highlight-style: breeze
+
+format:
+  html:
+    theme: journal
+    page-layout: full
+    # theme: litera
+    # embed-resources: true # single html file
+    embed-resources: true
+---
+
+# load packages
+```{r}
+# install.packages("pacman")
+pacman::p_load(
+    tidyverse,
+    openxlsx
+)
+options(scipen = 99) # disable scientific (E) notaion
+```
+
+# read marketing data
+```{r}
+# df <- datarium::marketing
+df <- read_csv('https://github.com/prasertcbs/basic-dataset/raw/master/marketing.csv')
+df
+```
+
+# evaluate model
+```{r}
+model <- lm(sales ~ youtube + facebook + newspaper, data = df)
+model |> summary()
+```
+
+y_hat = 3.5266 + 0.045765youtube + 0.188530facebook - 0.001037newspaper
+
+```{r}
+model$fitted.values
+model$residuals
+```
+
+```{r}
+df
+```
+```{r}
+df <- df |> mutate(predicted=model$fitted.values, residual=model$residuals)
+df
+```
+## calc r-square
+```{r}
+ssr <- sum(df$residual^2)
+sst <- sum((df$sales-mean(df$sales))^2)
+r2 <- 1 - (ssr/sst)
+r2
+```
+# prediction
+- youtube = 200
+- facebook = 80
+- newspaper = 10
+
+```{r}
+d_new <- data.frame(
+  youtube=c(200, 150),
+  facebook=c(80, 100),
+  newspaper=c(10, 5)
+)
+d_new
+```
+```{r}
+predict(model, d_new)
+```
+
+```{r}
+d_new <- openxlsx::read.xlsx('./marketing_newdata.xlsx')
+d_new
+```
+
+
+```{r}
+p <- predict(model, d_new)
+p
+```
+
+```{r}
+d_new <- d_new |> mutate(predicted = p)
+d_new
+```
+
+
+```{r}
+model |> summary()
+```
+
+```{r}
+model2 <- lm(sales ~ youtube + facebook, data=df)
+model2 |> summary()
+```
+
+```{r}
+d_new
+```
+
+
+```{r}
+p2 <- predict(model2, d_new)
+p2
+```
+
+```{r}
+d_new <- d_new |> mutate(predicted2 = p2)
+d_new
+```
+
+```{r}
+df$predicted <- NULL
+df$residual <- NULL
+df
+```
+# tips: how to write a formula
+```{r}
+model3 <- lm(sales ~ ., data=df)
+model3 |> summary()
+# model <- lm(sales ~ youtube + facebook + newspaper, data=df)
+```
+
+```{r}
+# model4 <- lm(sales ~ . -newspaper, data=df)
+model4 <- lm(sales ~ youtube + facebook, data=df)
+model4 |> summary()
+```
+
+```{r}
+d_new
+```
+
+# save predicted results
+```{r}
+write_csv(d_new, 'marketing_predict.csv')
+openxlsx::write.xlsx(d_new, 'marketing_predict.xlsx')
+```
+
+
+
+
+
