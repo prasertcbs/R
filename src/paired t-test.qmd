@@ -1,0 +1,132 @@
+---
+title: "paired t-test"
+date: now
+author:
+  - name: Prasert Kanawattanachai 
+
+project:
+    type: "default"
+
+crossref:
+  fig-title: '**Figure**'
+  fig-labels: arabic
+  title-delim: "**.**"
+  
+fig-cap-location: top
+
+title-block-banner: true
+
+code-fold: show
+code-line-numbers: true
+toc: true
+toc-depth: 5
+number-sections: true
+number-depth: 5
+
+df-print: paged
+# df-print: kable
+highlight-style: breeze
+
+format:
+  html:
+    theme: journal
+    page-layout: full
+    # theme: litera
+    # embed-resources: true # single html file
+    embed-resources: true
+---
+
+# load packages
+```{r}
+# install.packages("pacman")
+pacman::p_load(
+    tidyverse,
+    dlookr,
+    rstatix,
+    ggpubr,
+    ggstatsplot
+)
+options(scipen = 99) # disable scientific (E) notaion
+```
+
+# read and prepare data
+```{r}
+data <- read_csv('https://github.com/prasertcbs/R/raw/main/src/paired_t-test_data.csv')
+data
+```
+
+# paired t-test
+- ref: [check paired t-test assumption](https://www.datanovia.com/en/lessons/t-test-assumptions/paired-t-test-assumptions/)
+
+## check assumptions
+```{r}
+diff = data$beta - data$gamma
+diff
+```
+
+```{r}
+shapiro.test(diff)
+```
+
+```{r}
+ggqqplot(diff)
+```
+
+```{r}
+mean(data$beta); mean(data$gamma)
+```
+
+## perform paired t-test
+```{r}
+t.test(data$beta, data$gamma, paired=T) # beta - gamma
+t.test(data$gamma, data$beta, paired=T) # gamma - beta
+```
+
+```{r}
+data # wide format
+```
+
+```{r}
+df <- data |> 
+  gather(key="maker", value="score", -id) |> 
+  arrange(maker, id)
+  
+df
+```
+
+```{r}
+df |> ggpubr::ggboxplot(x="maker", y="score", color="maker", add="mean") +  expand_limits(y = 0)
+```
+
+## long format
+```{r}
+# df <- data |> gather(key="maker", value="score", -id) |> 
+#   arrange(maker, id)
+# df
+t.test(formula = score ~ maker, paired=T, data=df)
+```
+
+```{r}
+ggstatsplot::ggwithinstats(data = df,
+              x = maker,
+              y = score,
+              type = "parametric") + ylab("taste score")
+ggsave('coffee_maker-paired.svg', width = 7, height = 5)
+system('open ./coffee_maker-paired.svg')
+```
+
+```{r}
+df |> rstatix::t_test(score ~ maker,
+                      paired = TRUE)
+```
+
+### one-way ANOVA with repeated measures
+```{r}
+aovw <- df |>
+  rstatix::anova_test(dv = score,
+                      wid = id, # individuals/subjects identifier
+                      within = maker # within-subjects factor variables 
+                      )
+aovw
+```
+
